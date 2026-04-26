@@ -7,4 +7,5 @@ pre-commit:
       glob: "*.test.ts"
       run: pnpm test {staged_files}
     knip:
-      run: pnpm knip
+      run: pnpm fix
+      stage_fixed: true
