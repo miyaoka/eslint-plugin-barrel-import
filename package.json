@@ -13,6 +13,7 @@
   ],
   "scripts": {
     "build": "tsgo --project tsconfig.build.json",
+    "knip": "knip",
     "typecheck": "tsgo --noEmit",
     "test": "bun test"
   },
@@ -21,7 +22,9 @@
     "@types/node": "24.12.2",
     "@typescript-eslint/parser": "8.58.2",
     "@typescript/native-preview": "7.0.0-dev.20260413.1",
-    "eslint": "10.2.0"
+    "eslint": "10.2.0",
+    "knip": "6.6.3",
+    "lefthook": "2.1.6"
   },
   "peerDependencies": {
     "eslint": ">=9"
