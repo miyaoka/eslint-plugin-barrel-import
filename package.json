@@ -30,7 +30,7 @@
     "@typescript-eslint/parser": "8.60.0",
     "@typescript/native-preview": "7.0.0-dev.20260527.2",
     "bumpp": "11.1.0",
-    "eslint": "10.4.0",
+    "eslint": "10.4.1",
     "knip": "6.14.2",
     "lefthook": "2.1.9"
   },
