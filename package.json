@@ -31,7 +31,7 @@
     "@typescript/native-preview": "7.0.0-dev.20260527.2",
     "bumpp": "11.1.0",
     "eslint": "10.4.1",
-    "knip": "6.14.2",
+    "knip": "6.15.0",
     "lefthook": "2.1.9"
   },
   "peerDependencies": {
