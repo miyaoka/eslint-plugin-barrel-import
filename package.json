@@ -27,7 +27,7 @@
   "devDependencies": {
     "@types/bun": "1.4.0",
     "@types/node": "24.13.3",
-    "@typescript-eslint/parser": "8.68.0",
+    "@typescript-eslint/parser": "8.69.0",
     "@typescript/native-preview": "7.0.0-dev.20260707.2",
     "bumpp": "12.2.2",
     "eslint": "10.9.1",
