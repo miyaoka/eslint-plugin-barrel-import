@@ -2,7 +2,7 @@ import { describe, test } from "bun:test";
 import { RuleTester } from "eslint";
 import tsParser from "@typescript-eslint/parser";
 
-import rule from "./barrelImport";
+import rule from "./barrelImport.ts";
 
 // Wire bun:test into RuleTester
 RuleTester.describe = describe;
