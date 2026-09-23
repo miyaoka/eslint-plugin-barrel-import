@@ -14,6 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions: {}
+    # App の秘密鍵は main 限定の environment に置き、他ブランチの workflow から読めなくする
+    environment: release
     steps:
       # GITHUB_TOKEN で作った PR の CI は承認待ちになり、作った Release は他の workflow を起動しない。
       # 専用 App のトークンなら PR の CI が自動で走り、Release が publish.yml を起動する。
