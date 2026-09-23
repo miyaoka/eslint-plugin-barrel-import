@@ -1,23 +1,88 @@
-name: Publish to npm
+# release-please が作った GitHub Release を起点に npm へ stage publish する。
+# release イベントの GITHUB_SHA は tag の commit で、checkout・build・provenance が tag と一致する。
+# stage された版はメンテナが npm 上で 2FA 承認するまで公開されない
+name: publish
 
 on:
   release:
-    types: [published]
+    types:
+      - published
+
+permissions: {}
 
 jobs:
-  publish:
+  test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
-      id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - name: Setup environment
-        uses: ./.github/actions/setup-environment
+        uses: $/.github/actions/setup-environment
+
+      - name: Test
+        run: pnpm test
+
+  # publish する成果物はキャッシュを経由せずに作る
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Set up by mise
+        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4
+        with:
+          install_args: node pnpm
+          cache: false
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Build
         run: pnpm build
 
-      - name: Publish
-        run: npm publish --provenance --access public
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: build-artifacts
+          path: dist/
+          retention-days: 1
+
+  # OIDC の id-token はこの job だけに置く
+  publish:
+    needs:
+      - test
+      - build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write # npm trusted publishing (OIDC)
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: build-artifacts
+          path: dist/
+
+      - name: Set up by mise
+        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4
+        with:
+          install_args: node
+          cache: false
+
+      - name: Stage publish
+        run: npm stage publish --provenance --ignore-scripts
