@@ -20,16 +20,13 @@
     "fix": "knip --fix",
     "knip": "knip",
     "typecheck": "tsgo --noEmit",
-    "test": "bun test",
-    "prepublishOnly": "pnpm build",
-    "release": "bumpp"
+    "test": "bun test"
   },
   "devDependencies": {
     "@types/bun": "1.4.2",
     "@types/node": "24.13.6",
     "@typescript-eslint/parser": "8.70.0",
     "@typescript/native-preview": "7.0.0-dev.20260707.2",
-    "bumpp": "12.3.0",
     "eslint": "10.11.0",
     "knip": "6.37.0",
     "lefthook": "2.1.14"

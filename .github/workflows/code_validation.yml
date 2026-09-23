@@ -9,43 +9,72 @@ on:
     branches:
       - main
 
+# job 内に write 権限のトークンを置かない。repo 既定の継承に委ねると、設定が write に転じても
+# workflow 側から観測できない
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   validation:
-    name: ${{ matrix.name }}
+    name: ${{ matrix.script }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - name: typecheck
-            command: pnpm typecheck
-
-          - name: test
-            command: pnpm test
-
-          - name: knip
-            command: pnpm knip
+        # matrix はスクリプト名だけを持ち、コマンド行は step 側に固定する。matrix にコマンド
+        # 文字列を持たせて実行すると、そこへ混入した式は検査から見えないままシェルで実行される
+        script:
+          - typecheck
+          - test
+          - knip
 
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - name: Setup environment
-        uses: ./.github/actions/setup-environment
+        uses: $/.github/actions/setup-environment
 
-      - name: Run ${{ matrix.name }}
-        run: ${{ matrix.command }}
+      - name: Run ${{ matrix.script }}
+        run: pnpm run "$SCRIPT"
+        env:
+          SCRIPT: ${{ matrix.script }}
+
+  # workflow / composite action のセキュリティ検査
+  #
+  # advanced-security: false は SARIF 出力を止める。SARIF は finding があっても exit 0 を
+  # 返すため、有効にすると gate として働かない
+  #
+  # zizmor 本体のバージョンは action が持つ対応表が決める。version を渡すと Renovate が
+  # それを Docker datasource として別に追い、action の対応表に載る前のバージョンへ上げる PR が
+  # 立つ。action は対応表に無いバージョンを Unknown version で拒否する
+  workflow_audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Audit workflows
+        uses: zizmorcore/zizmor-action@cc914d7f3750a2d13d75c7f184a1060aa0e9d482 # v0.6.4
+        with:
+          advanced-security: false
 
   all-green:
     runs-on: ubuntu-latest
     if: always()
     needs:
       - validation
+      - workflow_audit
     steps:
       - name: Check all CI jobs status
         uses: re-actors/alls-green@b5b5b37504aa4183270bd3d855c52a67f212be35 # release/v1
