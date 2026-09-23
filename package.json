@@ -20,8 +20,7 @@
     "fix": "knip --fix",
     "knip": "knip",
     "typecheck": "tsgo --noEmit",
-    "test": "bun test",
-    "prepublishOnly": "pnpm build"
+    "test": "bun test"
   },
   "devDependencies": {
     "@types/bun": "1.4.2",
