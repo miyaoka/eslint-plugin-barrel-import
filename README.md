@@ -17,7 +17,11 @@ ESLint plugin that enforces imports from scoped directories only through barrel 
 pnpm add -D @miyaoka/eslint-plugin-barrel-import
 ```
 
+`eslint` (>=9) is an optional peer dependency. Install it when using the plugin with ESLint; it is not needed with oxlint.
+
 ## Usage
+
+### ESLint
 
 ```js
 // eslint.config.js
@@ -47,6 +51,34 @@ export default [
     },
   },
 ];
+```
+
+### oxlint
+
+Load the plugin through `jsPlugins`.
+
+```jsonc
+// .oxlintrc.json
+{
+  "jsPlugins": [{ "name": "barrel-import", "specifier": "@miyaoka/eslint-plugin-barrel-import" }],
+  "rules": {
+    "barrel-import/barrel-import": [
+      "error",
+      {
+        "scopes": {
+          "shared": {
+            "directories": ["shared"],
+            "dependsOn": []
+          },
+          "features": {
+            "directories": ["features"],
+            "dependsOn": ["shared"]
+          }
+        }
+      }
+    ]
+  }
+}
 ```
 
 ## Rules

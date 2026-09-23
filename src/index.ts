@@ -1,4 +1,4 @@
-import barrelImport from "./rules/barrelImport";
+import barrelImport from "./rules/barrelImport.ts";
 
 const plugin = {
   rules: {
