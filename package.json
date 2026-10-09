@@ -29,7 +29,7 @@
     "@typescript/native-preview": "7.0.0-dev.20260707.2",
     "eslint": "10.12.0",
     "knip": "6.39.0",
-    "lefthook": "2.1.16"
+    "lefthook": "2.1.17"
   },
   "peerDependencies": {
     "eslint": ">=9"
